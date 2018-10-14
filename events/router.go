@@ -2,8 +2,8 @@ package events
 
 import (
 	"github.com/bwmarrin/discordgo"
-	"greatBot/commands"
-	"greatBot/util"
+	"github.com/getynge/greatBot/commands"
+	"github.com/getynge/greatBot/util"
 	"os"
 )
 

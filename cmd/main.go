@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
-	"greatBot/events"
+	"github.com/getynge/greatBot/events"
 	"os"
 	"os/signal"
 	"syscall"
@@ -14,7 +14,7 @@ func getBotString() string {
 	return fmt.Sprintf("Bot %s", key)
 }
 
-func main(){
+func main() {
 	// if this ever hits prod, move key to environment variable
 	session, err := discordgo.New(getBotString())
 
