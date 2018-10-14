@@ -7,11 +7,11 @@ import (
 )
 
 type EventDispatcher struct {
-	botID string
+	botID  string
 	prefix string
 }
 
-func NewDispatcher(botID string, prefix string) EventDispatcher{
+func NewDispatcher(botID string, prefix string) EventDispatcher {
 	return EventDispatcher{
 		botID,
 		prefix,
@@ -19,7 +19,7 @@ func NewDispatcher(botID string, prefix string) EventDispatcher{
 }
 
 func (*EventDispatcher) ReadyHandler(session *discordgo.Session, ready *discordgo.Ready) {
-	err := session.UpdateStatus(0, "A great bot")
+	err := session.UpdateStatus(0, "with itself")
 	if err != nil {
 		fmt.Println("Could not set status, continuing...")
 	}

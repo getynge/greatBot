@@ -3,7 +3,7 @@ package events
 import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/getynge/greatBot/commands"
-	"github.com/getynge/greatBot/util"
+	"github.com/getynge/greatBot/parser"
 	"os"
 )
 
@@ -12,7 +12,7 @@ var rategood = os.Getenv("DISCORD_RATE_GOOD")
 var ratebad = os.Getenv("DISCORD_RATE_BAD")
 
 func (id *EventDispatcher) routeEvent(session *discordgo.Session, message *discordgo.MessageCreate) {
-	command := util.ExtractCommand(id.prefix, message.Content)
+	command := parser.LexCommand(id.prefix, message.Content)
 	if command == nil {
 		return
 	}

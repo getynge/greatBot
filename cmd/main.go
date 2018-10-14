@@ -10,7 +10,7 @@ import (
 )
 
 func getBotString() string {
-	key := os.Getenv("DiscordBotKey")
+	key := os.Getenv("DISCORD_BOT_KEY")
 	return fmt.Sprintf("Bot %s", key)
 }
 
