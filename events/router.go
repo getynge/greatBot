@@ -1,9 +1,9 @@
 package events
 
 import (
+	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/getynge/greatBot/commands"
-	"github.com/getynge/greatBot/parser"
 	"os"
 )
 
@@ -12,13 +12,13 @@ var rategood = os.Getenv("DISCORD_RATE_GOOD")
 var ratebad = os.Getenv("DISCORD_RATE_BAD")
 
 func (id *EventDispatcher) routeEvent(session *discordgo.Session, message *discordgo.MessageCreate) {
-	command := parser.LexCommand(id.prefix, message.Content)
-	if command == nil {
+	tree, errs := commands.ParseCommand(id.prefix, message.Content)
+	if errs != nil {
+		for _, err := range errs {
+			session.ChannelMessageSend(message.ChannelID, fmt.Sprintf("Error: %s", err.Error()))
+		}
 		return
 	}
 
-	switch command[0] {
-	case ratecmd:
-		commands.RateUser(session, message, rategood, ratebad)
-	}
+	commands.Commands[tree.Literal].CMD(session, message, tree)
 }

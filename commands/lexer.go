@@ -1,13 +1,11 @@
-package parser
+package commands
 
 import (
 	"strconv"
 	"strings"
 )
 
-type Command []string
-
-func LexCommand(prefix string, body string) (out Command) {
+func LexCommand(prefix string, body string) (results []interface{}) {
 
 	var arguments []string
 
@@ -17,32 +15,32 @@ func LexCommand(prefix string, body string) (out Command) {
 	} else {
 		return
 	}
-	// TODO: change this to tokens once I finish adding parser support
-	out = arguments
 
-	results := make([]interface{}, len(arguments))
+	results = make([]interface{}, len(arguments))
 	results[0] = arguments[0]
 
 	for i, argument := range arguments[1:] {
 		if strings.HasPrefix(argument, "<@") && strings.HasSuffix(argument, ">") && len(argument) == 22 {
-			results[i] = userReference{argument}
+			results[i+1] = userReference(argument)
 		} else if strings.HasPrefix(argument, "#") {
-			results[i] = channelReference{argument}
+			results[i+1] = channelReference(argument)
 		} else if strings.Contains(argument, "#") {
 			parts := strings.Split(argument, "#")
+
+			// should probably be using regex for this
 			if len(parts) != 2 || len(parts[1]) != 4 {
-				results[i] = argument
+				results[i+1] = argument
 				continue
 			}
-			parsed, err := strconv.Atoi(parts[1])
+			_, err := strconv.Atoi(parts[1])
 
 			if err != nil {
-				results[i] = argument
+				results[i+1] = argument
 				continue
 			}
-			results[i] = userName{parts[0], parsed}
+			results[i+1] = userName(argument)
 		} else {
-			results[i] = argument
+			results[i+1] = argument
 		}
 	}
 
