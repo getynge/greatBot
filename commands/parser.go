@@ -6,9 +6,16 @@ import (
 	"os"
 )
 
+type Argument struct {
+	Channel      *int64 `'#'@Int`
+	Mention      *int64 `| '<''@'@Int'>'`
+	Username     string `| @Ident`
+	Discriminant *int64 `@Int`
+}
+
 type Command struct {
-	Name      string   `@Ident`
-	Arguments []string `[ { @Ident } ]`
+	Name string      `@Ident`
+	Args []*Argument `[ { @@ } ]`
 }
 
 type Commands struct {
