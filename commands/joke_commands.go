@@ -6,12 +6,8 @@ import (
 	"strings"
 )
 
-func SetRating(session *discordgo.Session, message *discordgo.MessageCreate) {
-
-}
-
-func RateUser(good string, bad string) CommandFunc {
-	return func(session *discordgo.Session, message *discordgo.MessageCreate, tree *Node) {
+func RateUser(good string, bad string) func(session *discordgo.Session, message *discordgo.MessageCreate) {
+	return func(session *discordgo.Session, message *discordgo.MessageCreate) {
 		target := message.Author
 
 		fmt.Printf("Command from %s\n", message.Author)
