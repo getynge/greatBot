@@ -3,18 +3,19 @@ package commands
 import (
 	"fmt"
 	"github.com/alecthomas/participle"
-	"os"
+	"github.com/alecthomas/participle/lexer"
 )
 
 type Argument struct {
-	Channel      *int64 `'#'@Int`
-	Mention      *int64 `| '<''@'@Int'>'`
-	Username     string `| @Ident`
-	Discriminant *int64 `@Int`
+	Channel   string `@Channel`
+	Mention   string `| @Mention`
+	Username  string `| @Username`
+	Quote     string `| @String`
+	PlainText string `| @Identifier | @Any`
 }
 
 type Command struct {
-	Name string      `@Ident`
+	Name string      `@Identifier`
 	Args []*Argument `[ { @@ } ]`
 }
 
@@ -23,16 +24,41 @@ type Commands struct {
 	Commands []*Command `| { @@';' }`
 }
 
-func ParseCommand(text string) (parsed *Commands) {
-	parser, err := participle.Build(&Commands{})
+type Parser struct {
+	parser *participle.Parser
+}
+
+func InitParser() (parser Parser, err error) {
+	parser = Parser{}
+
+	// The regexp lexer stores input in memory, but this should be fine since chat messages are relatively small
+	cmdLexer, err := lexer.Regexp(
+		`(?m)` +
+			`(\s+)` +
+			`|(^//.*$)` +
+			`|(/\*.*\*/)` + // discord bot supports comments, because why not
+			`|(?P<String>"(?:\\.|[^"])*")` +
+			`|(?P<Mention><@[0-9]{18}>)` +
+			`|(?P<Channel>#[a-zA-Z]+)` +
+			`|(?P<Username>.*#[0-9]{4})` +
+			`|(?P<Identifier>[a-zA-Z]+)` +
+			`|(?P<Any>\S+)`, // used for nicknames, which may not conform to the identifier group
+	)
+
 	if err != nil {
-		fmt.Println("Parser syntax malformed, exiting...")
-		fmt.Printf("Error %s\n", err.Error())
-		os.Exit(1)
+		return
 	}
+	fmt.Println(cmdLexer.Symbols())
+	parser.parser, err = participle.Build(&Commands{}, participle.Lexer(cmdLexer))
+
+	return
+}
+
+func (parserHolder *Parser) ParseCommand(text string) (parsed *Commands) {
+	parser := parserHolder.parser
 
 	parsed = &Commands{}
-	err = parser.ParseString(text, parsed)
+	err := parser.ParseString(text, parsed)
 	if err != nil {
 		parsed = nil
 		fmt.Printf("Bad command syntax %s\n", err.Error())

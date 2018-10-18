@@ -16,7 +16,7 @@ func (id *EventDispatcher) routeEvent(session *discordgo.Session, message *disco
 		return
 	}
 	command := strings.TrimPrefix(message.Content, id.prefix)
-	result := commands.ParseCommand(command)
+	result := id.parser.ParseCommand(command)
 	if result != nil && result.Command != nil && result.Command.Name == ratecmd {
 		commands.RateUser(rategood, ratebad)(session, message)
 	}

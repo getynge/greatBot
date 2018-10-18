@@ -3,18 +3,27 @@ package events
 import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
+	"github.com/getynge/greatBot/commands"
 	"strings"
 )
 
 type EventDispatcher struct {
 	botID  string
 	prefix string
+	parser commands.Parser
 }
 
 func NewDispatcher(botID string, prefix string) EventDispatcher {
+	parser, err := commands.InitParser()
+
+	if err != nil {
+		panic(err) // parser compilation errors are fatal, so might as well panic
+	}
+
 	return EventDispatcher{
 		botID,
 		prefix,
+		parser,
 	}
 }
 
