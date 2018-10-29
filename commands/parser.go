@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"errors"
 	"fmt"
 	"github.com/alecthomas/participle"
 	"github.com/alecthomas/participle/lexer"
@@ -54,14 +55,15 @@ func InitParser() (parser Parser, err error) {
 	return
 }
 
-func (parserHolder *Parser) ParseCommand(text string) (parsed *Commands) {
+func (parserHolder *Parser) ParseCommand(text string) (parsed *Commands, err error) {
 	parser := parserHolder.parser
 
 	parsed = &Commands{}
-	err := parser.ParseString(text, parsed)
+	err = parser.ParseString(text, parsed)
 	if err != nil {
 		parsed = nil
-		fmt.Printf("Bad command syntax %s\n", err.Error())
+		errtxt := fmt.Sprintf("Bad command syntax %s\n", err.Error())
+		err = errors.New(errtxt)
 	}
 
 	return

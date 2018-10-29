@@ -54,6 +54,7 @@
   analyzer-version = 1
   input-imports = [
     "github.com/alecthomas/participle",
+    "github.com/alecthomas/participle/lexer",
     "github.com/bwmarrin/discordgo",
   ]
   solver-name = "gps-cdcl"
